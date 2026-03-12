@@ -78,10 +78,12 @@ products = [
 
 
 def find_product(product_id):
+    """Шукає товар за ID, повертає словник або None."""
     return next((p for p in products if p["id"] == product_id), None)
 
 
 def apply_filters(product_list, category=None, min_price=None, max_price=None):
+    """Фільтрує список товарів за категорією та діапазоном цін."""
     result = product_list
     if category:
         result = [p for p in result if p["category"] == category]
@@ -94,12 +96,14 @@ def apply_filters(product_list, category=None, min_price=None, max_price=None):
 
 @app.route("/")
 def index():
+    """Головна сторінка з загальною інформацією про магазин."""
     in_stock_count = sum(1 for p in products if p["in_stock"])
     return render_template("index.html", total=len(products), in_stock=in_stock_count)
 
 
 @app.route("/catalog")
 def catalog():
+    """Каталог усіх товарів з можливістю фільтрації за категорією."""
     category = request.args.get("category")
     filtered = apply_filters(products, category=category)
     categories = sorted(set(p["category"] for p in products))
@@ -114,6 +118,7 @@ def catalog():
 
 @app.route("/product/<int:product_id>")
 def product(product_id):
+    """Сторінка окремого товару. Повертає 404, якщо товар не знайдено."""
     item = find_product(product_id)
     if item is None:
         return render_template("404.html", message="Товар не знайдено"), 404
@@ -122,6 +127,7 @@ def product(product_id):
 
 @app.route("/search")
 def search():
+    """Пошук товарів за назвою та описом. Без запиту перенаправляє на каталог."""
     query = request.args.get("q", "").strip()
     if not query:
         return redirect(url_for("catalog"))
@@ -143,17 +149,20 @@ def search():
 
 @app.route("/random")
 def random_product():
+    """Перенаправляє на сторінку випадкового товару з каталогу."""
     item = random.choice(products)
     return redirect(url_for("product", product_id=item["id"]))
 
 
 @app.route("/about")
 def about():
+    """Сторінка з інформацією про магазин."""
     return render_template("about.html")
 
 
 @app.route("/api/products")
 def api_products():
+    """API: повертає список товарів з опціональною фільтрацією."""
     category = request.args.get("category")
     min_price = request.args.get("min_price", type=int)
     max_price = request.args.get("max_price", type=int)
@@ -165,6 +174,7 @@ def api_products():
 
 @app.route("/api/products/stats")
 def api_stats():
+    """API: повертає статистику по каталогу товарів."""
     in_stock = [p for p in products if p["in_stock"]]
     prices = [p["price"] for p in products]
     return jsonify(
@@ -182,6 +192,7 @@ def api_stats():
 
 @app.route("/api/products/<int:product_id>")
 def api_product(product_id):
+    """API: повертає один товар за ID або помилку 404."""
     item = find_product(product_id)
     if item is None:
         return jsonify({"error": "Товар не знайдено"}), 404
@@ -190,6 +201,7 @@ def api_product(product_id):
 
 @app.errorhandler(404)
 def page_not_found(error):
+    """Обробник помилки 404 — повертає кастомну сторінку."""
     return render_template("404.html", message="Сторінку не знайдено"), 404
 
 
