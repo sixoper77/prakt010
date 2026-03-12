@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Каталог{% endblock %}
+
+{% block content %}
+
+{% if search_query %}
+<div class="search-info">
+    Результати пошуку за запитом: <strong>«{{ search_query }}»</strong> — знайдено {{ products|length }} товар(ів).
+    <a href="{{ url_for('catalog') }}">Скинути</a>
+</div>
+{% endif %}
+
+<h1>
+    {% if search_query %}Пошук
+    {% elif current_category %}{{ current_category }}
+    {% else %}Каталог товарів{% endif %}
+    <span style="font-size:16px; font-weight:normal; color:#888;">({{ products|length }})</span>
+</h1>
+
+{% if not search_query %}
+<div class="filters">
+    <a href="{{ url_for('catalog') }}" class="{% if not current_category %}active{% endif %}">Усі товари</a>
+    {% for cat in categories %}
+    <a href="{{ url_for('catalog', category=cat) }}" class="{% if current_category == cat %}active{% endif %}">{{ cat }}</a>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% if products %}
+<div class="product-grid">
+    {% for p in products %}
+    <div class="product-card">
+        <div class="category">{{ p.category }}</div>
+        <h3><a href="{{ url_for('product', product_id=p.id) }}">{{ p.name }}</a></h3>
+        <div class="desc">{{ p.description }}</div>
+        <div class="footer">
+            <div class="price">{{ "{:,.0f}".format(p.price).replace(',', ' ') }} грн</div>
+            {% if p.in_stock %}
+            <span class="in-stock">В наявності</span>
+            {% else %}
+            <span class="no-stock">Немає</span>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty">
+    <p>Нічого не знайдено.</p>
+    <a href="{{ url_for('catalog') }}" class="btn">Весь каталог</a>
+</div>
+{% endif %}
+
+{% endblock %}

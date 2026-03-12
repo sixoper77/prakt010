@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block content %}
+
+<a href="{{ url_for('catalog') }}" class="back">← Назад до каталогу</a>
+
+<div class="product-detail">
+    <p style="color:#888; font-size:13px;">{{ product.category }}</p>
+    <h1>{{ product.name }}</h1>
+
+    <div>
+        {% if product.in_stock %}
+        <span class="in-stock">В наявності</span>
+        {% else %}
+        <span class="no-stock">Немає в наявності</span>
+        {% endif %}
+    </div>
+
+    <div class="price-big">{{ "{:,.0f}".format(product.price).replace(',', ' ') }} грн</div>
+
+    <div class="desc-box">{{ product.description }}</div>
+
+    {% if product.in_stock %}
+    <button class="btn">Додати в кошик</button>
+    {% endif %}
+    &nbsp;
+    <a href="{{ url_for('random_product') }}" class="btn btn-outline">Випадковий товар</a>
+</div>
+
+{% endblock %}

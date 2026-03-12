@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Головна{% endblock %}
+
+{% block content %}
+<h1>Ласкаво просимо до магазину електроніки!</h1>
+<p>У нашому каталозі ви знайдете ноутбуки, монітори, периферію та багато іншого.</p>
+
+<div class="stats">
+    <div class="stat-box">
+        <div class="num">{{ total }}</div>
+        <div class="lbl">Товарів</div>
+    </div>
+    <div class="stat-box">
+        <div class="num">{{ in_stock }}</div>
+        <div class="lbl">В наявності</div>
+    </div>
+</div>
+
+<a href="{{ url_for('catalog') }}" class="btn">Перейти до каталогу</a>
+&nbsp;
+<a href="{{ url_for('random_product') }}" class="btn btn-outline">Випадковий товар</a>
+{% endblock %}
